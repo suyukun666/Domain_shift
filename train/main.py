@@ -22,7 +22,7 @@ cuda = True
 cudnn.benchmark = True
 lr = 1e-3
 batch_size = 128
-image_size = 28
+image_size = 224
 n_epoch = 100
 
 manual_seed = random.randint(1, 10000)
@@ -84,7 +84,7 @@ for p in my_net.parameters():
 
 # training
 
-for epoch in xrange(n_epoch):
+for epoch in range(n_epoch):
 
     len_dataloader = min(len(dataloader_source), len(dataloader_target))
     data_source_iter = iter(dataloader_source)
