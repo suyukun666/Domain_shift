@@ -5,7 +5,9 @@ from torch.autograd import Variable
 from torchvision import transforms
 from dataset.data_loader import myImageFloder
 from torchvision import datasets
+import torchnet.meter as meter 
 
+m = meter.mAPMeter()
 
 def test(dataset_name, epoch):
     assert dataset_name in ['VOCdeckit', 'VOCRTTS']
@@ -65,8 +67,8 @@ def test(dataset_name, epoch):
     data_target_iter = iter(dataloader)
 
     i = 0
-    n_total = 0
-    n_correct = 0
+    # n_total = 0
+    # n_correct = 0
 
     while i < len_dataloader:
 
@@ -91,12 +93,15 @@ def test(dataset_name, epoch):
         classv_label = Variable(class_label)
 
         class_output, _ = my_net(input_data=inputv_img, alpha=alpha)
-        pred = class_output.data.max(1, keepdim=True)[1]
-        n_correct += pred.eq(classv_label.data.view_as(pred)).cpu().sum()
-        n_total += batch_size
+        # pred = class_output.data.max(1, keepdim=True)[1]
+        # n_correct += pred.eq(classv_label.data.view_as(pred)).cpu().sum()
+        # n_total += batch_size
+
+        m.add(class_output,classv_label)
+        mAP=m.value() 
 
         i += 1
 
-    accu = n_correct.item() * 1.0 / n_total
+    # accu = n_correct.item() * 1.0 / n_total
 
-    print ('epoch: %d, accuracy of the %s dataset: %f' % (epoch, dataset_name, accu))
+    print ('epoch: %d, mAP of the %s dataset: %f' % (epoch, dataset_name, mAP))
