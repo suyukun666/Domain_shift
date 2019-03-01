@@ -70,7 +70,7 @@ class CNNModel(nn.Module):
         self.class_classifier.add_module('c_relu2', nn.ReLU(True))
         self.class_classifier.add_module('c_drop2', nn.Dropout2d())
         self.class_classifier.add_module('c_fc3', nn.Linear(100, 20))
-        self.class_classifier.add_module('c_softmax', nn.LogSoftmax())
+        # self.class_classifier.add_module('c_softmax', nn.LogSoftmax())
 
         # self.domain_classifier = nn.Sequential()
         # self.domain_classifier.add_module('d_fc1', nn.Linear(50 * 4 * 4, 100))

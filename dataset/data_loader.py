@@ -1,3 +1,4 @@
+import torchs
 import torch.utils.data as data
 from PIL import Image
 import os
@@ -64,7 +65,7 @@ class myImageFloder(data.Dataset):
         img = self.loader(os.path.join(self.root, fn))
         if self.transform is not None:
             img = self.transform(img)
-        return img, torch.Tensor(label)
+        return img, label
 
     def __len__(self):
         return len(self.imgs)

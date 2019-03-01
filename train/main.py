@@ -6,15 +6,15 @@ import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import torch.utils.data
 from torch.autograd import Variable
-from dataset.data_loader import GetLoader
+from dataset.data_loader import myImageFloder
 from torchvision import datasets
 from torchvision import transforms
 from models.model import CNNModel
 import numpy as np
 from test import test
 
-source_dataset_name = 'mnist'
-target_dataset_name = 'mnist_m'
+source_dataset_name = 'VOCdevkit'
+target_dataset_name = 'VOCRTTS'
 source_image_root = os.path.join('..', 'dataset', source_dataset_name)
 target_image_root = os.path.join('..', 'dataset', target_dataset_name)
 model_root = os.path.join('..', 'models')
@@ -37,10 +37,24 @@ img_transform = transforms.Compose([
     transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
 ])
 
-dataset_source = datasets.MNIST(
-    root=source_image_root,
-    train=True,
-    transform=img_transform,
+# dataset_source = datasets.MNIST(
+#     root=source_image_root,
+#     train=True,
+#     transform=img_transform,
+# )
+
+# dataloader_source = torch.utils.data.DataLoader(
+#     dataset=dataset_source,
+#     batch_size=batch_size,
+#     shuffle=True,
+#     num_workers=8)
+
+train_list_s = os.path.join(target_image_root, 'VOCdevkit_train_labels.txt')
+
+dataset_source = myImageFloder(
+    root=os.path.join(target_image_root, 'VOCdevkit_train'),
+    label=train_list_s,
+    transform=img_transform
 )
 
 dataloader_source = torch.utils.data.DataLoader(
@@ -49,11 +63,11 @@ dataloader_source = torch.utils.data.DataLoader(
     shuffle=True,
     num_workers=8)
 
-train_list = os.path.join(target_image_root, 'mnist_m_train_labels.txt')
+train_list_t = os.path.join(target_image_root, 'VOCRTTS_train_labels.txt')
 
-dataset_target = GetLoader(
-    data_root=os.path.join(target_image_root, 'mnist_m_train'),
-    data_list=train_list,
+dataset_target = myImageFloder(
+    root=os.path.join(target_image_root, 'VOCRTTS_train'),
+    label=train_list_t,
     transform=img_transform
 )
 
@@ -71,7 +85,7 @@ my_net = CNNModel()
 
 optimizer = optim.Adam(my_net.parameters(), lr=lr)
 
-loss_class = torch.nn.NLLLoss()
+loss_class = torch.nn.BCEWithLogitsLoss()
 loss_domain = torch.nn.NLLLoss()
 
 if cuda:
@@ -156,7 +170,7 @@ for epoch in range(n_epoch):
               % (epoch, i, len_dataloader, err_s_label.cpu().data.numpy(),
                  err_s_domain.cpu().data.numpy(), err_t_domain.cpu().data.numpy()))
 
-    torch.save(my_net, '{0}/mnist_mnistm_model_epoch_{1}.pth'.format(model_root, epoch))
+    torch.save(my_net, '{0}/VOC_model_epoch_{1}.pth'.format(model_root, epoch))
     test(source_dataset_name, epoch)
     test(target_dataset_name, epoch)
 

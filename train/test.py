@@ -3,12 +3,12 @@ import torch.backends.cudnn as cudnn
 import torch.utils.data
 from torch.autograd import Variable
 from torchvision import transforms
-from dataset.data_loader import GetLoader
+from dataset.data_loader import myImageFloder
 from torchvision import datasets
 
 
 def test(dataset_name, epoch):
-    assert dataset_name in ['mnist', 'mnist_m']
+    assert dataset_name in ['VOCdeckit', 'VOCRTTS']
 
     model_root = os.path.join('..', 'models')
     image_root = os.path.join('..', 'dataset', dataset_name)
@@ -27,19 +27,21 @@ def test(dataset_name, epoch):
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
 
-    if dataset_name == 'mnist_m':
-        test_list = os.path.join(image_root, 'mnist_m_test_labels.txt')
+    if dataset_name == 'VOCRTTS':
+        test_list = os.path.join(image_root, 'VOCRTTS_test_labels.txt')
 
-        dataset = GetLoader(
-            data_root=os.path.join(image_root, 'mnist_m_test'),
-            data_list=test_list,
+        dataset = myImageFloder(
+            root=os.path.join(image_root, 'VOCRTTS_test'),
+            label=test_list,
             transform=img_transform
         )
     else:
-        dataset = datasets.MNIST(
-            root=image_root,
-            train=False,
-            transform=img_transform,
+        test_list = os.path.join(image_root, 'VOCdevkit_test_labels.txt')
+        
+        dataset = myImageFloder(
+            root=os.path.join(image_root, 'VOCdevkit_test'),
+            label=test_list,
+            transform=img_transform
         )
 
     dataloader = torch.utils.data.DataLoader(
@@ -52,7 +54,7 @@ def test(dataset_name, epoch):
     """ training """
 
     my_net = torch.load(os.path.join(
-        model_root, 'mnist_mnistm_model_epoch_' + str(epoch) + '.pth'
+        model_root, 'VOC_model_epoch_' + str(epoch) + '.pth'
     ))
     my_net = my_net.eval()
 
