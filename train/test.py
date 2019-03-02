@@ -98,7 +98,7 @@ def test(dataset_name, epoch):
         # n_total += batch_size
 
         m.add(class_output,classv_label)
-        mAP=m.value() 
+        mAP=m.value().item()
 
         i += 1
 
