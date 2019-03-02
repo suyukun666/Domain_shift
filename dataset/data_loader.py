@@ -65,7 +65,7 @@ class myImageFloder(data.Dataset):
         img = self.loader(os.path.join(self.root, fn))
         if self.transform is not None:
             img = self.transform(img)
-        return img, label
+        return img, torch.Tensor(label)
 
     def __len__(self):
         return len(self.imgs)
