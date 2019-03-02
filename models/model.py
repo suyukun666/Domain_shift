@@ -69,7 +69,7 @@ class CNNModel(nn.Module):
         self.class_classifier.add_module('c_fc2', nn.Linear(4096, 4096))
         self.class_classifier.add_module('c_relu2', nn.ReLU(True))
         self.class_classifier.add_module('c_drop2', nn.Dropout2d())
-        self.class_classifier.add_module('c_fc3', nn.Linear(100, 20))
+        self.class_classifier.add_module('c_fc3', nn.Linear(100, 5))
         # self.class_classifier.add_module('c_softmax', nn.LogSoftmax())
 
         # self.domain_classifier = nn.Sequential()
@@ -91,7 +91,7 @@ class CNNModel(nn.Module):
         self.domain_classifier.add_module('d_softmax', nn.LogSoftmax())
 
     def forward(self, input_data, alpha):
-        input_data = input_data.expand(input_data.data.shape[0], 3, 28, 28)
+        input_data = input_data.expand(input_data.data.shape[0], 3, 224, 224)
         feature = self.feature(input_data)
         feature = feature.view(-1, 512 * 7 * 7)
         reverse_feature = ReverseLayerF.apply(feature, alpha)
