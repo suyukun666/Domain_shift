@@ -21,7 +21,7 @@ model_root = os.path.join('..', 'models')
 cuda = True
 cudnn.benchmark = True
 lr = 1e-3
-batch_size = 128
+batch_size = 2
 image_size = 224
 n_epoch = 100
 
@@ -49,10 +49,10 @@ img_transform = transforms.Compose([
 #     shuffle=True,
 #     num_workers=8)
 
-train_list_s = os.path.join(target_image_root, 'VOCdevkit_train_labels.txt')
+train_list_s = os.path.join(source_image_root, 'VOCdevkit_train_labels.txt')
 
 dataset_source = myImageFloder(
-    root=os.path.join(target_image_root, 'VOCdevkit_train'),
+    root=os.path.join(source_image_root, 'VOCdevkit_train'),
     label=train_list_s,
     transform=img_transform
 )
@@ -118,7 +118,7 @@ for epoch in range(n_epoch):
         batch_size = len(s_label)
 
         input_img = torch.FloatTensor(batch_size, 3, image_size, image_size)
-        class_label = torch.LongTensor(batch_size)
+        class_label = torch.FloatTensor(batch_size)
         domain_label = torch.zeros(batch_size)
         domain_label = domain_label.long()
 

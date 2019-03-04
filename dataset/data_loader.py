@@ -45,7 +45,7 @@ class myImageFloder(data.Dataset):
         imgs=[]
         class_names=[]
         for line in  fh.readlines():
-            if c==0:
+            if c==1:
                 class_names=[n.strip() for n in line.rstrip().split('	')]
             else:
                 cls = line.split() 

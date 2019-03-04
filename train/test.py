@@ -10,14 +10,14 @@ import torchnet.meter as meter
 m = meter.mAPMeter()
 
 def test(dataset_name, epoch):
-    assert dataset_name in ['VOCdeckit', 'VOCRTTS']
+    assert dataset_name in ['VOCdevkit', 'VOCRTTS']
 
     model_root = os.path.join('..', 'models')
     image_root = os.path.join('..', 'dataset', dataset_name)
 
     cuda = True
     cudnn.benchmark = True
-    batch_size = 128
+    batch_size = 2
     image_size = 224
     alpha = 0
 
@@ -90,14 +90,15 @@ def test(dataset_name, epoch):
         input_img.resize_as_(t_img).copy_(t_img)
         class_label.resize_as_(t_label).copy_(t_label)
         inputv_img = Variable(input_img)
-        classv_label = Variable(class_label)
+        classv_label = Variable(class_label, requires_grad = False)
 
         class_output, _ = my_net(input_data=inputv_img, alpha=alpha)
+        out_class_output = Variable(class_output, requires_grad = False)
         # pred = class_output.data.max(1, keepdim=True)[1]
         # n_correct += pred.eq(classv_label.data.view_as(pred)).cpu().sum()
         # n_total += batch_size
 
-        m.add(class_output,classv_label)
+        m.add(out_class_output,classv_label)
         mAP=m.value().item()
 
         i += 1
