@@ -79,7 +79,7 @@ def test(dataset_name, epoch):
         batch_size = len(t_label)
 
         input_img = torch.FloatTensor(batch_size, 3, image_size, image_size)
-        class_label = torch.LongTensor(batch_size)
+        class_label = torch.FloatTensor(batch_size)
 
         if cuda:
             t_img = t_img.cuda()
